@@ -1,0 +1,137 @@
+{
+  "projects": [],
+  "education": [
+    {
+      "institution": "University of Illinois Urbana-Champaign",
+      "school": "University of Illinois Urbana-Champaign",
+      "degree": "Bachelor of Science",
+      "fieldOfStudy": "Computer Science",
+      "major": "Computer Science",
+      "startDate": "2018-08",
+      "endDate": "2022-05",
+      "gpa": "3.8"
+    }
+  ],
+  "resumeStyles": {
+    "fitToOnePage": true
+  },
+  "certifications": [
+    {
+      "name": "CompTIA Security+",
+      "issuer": "CompTIA",
+      "date": "2022-04"
+    },
+    {
+      "name": "AWS Certified Solutions Architect - Associate",
+      "issuer": "Amazon Web Services",
+      "date": "2023-08"
+    }
+  ],
+  "customSections": [],
+  "hiddenSections": [],
+  "workExperience": [
+    {
+      "company": "Apex Defense Solutions",
+      "title": "Cybersecurity Analyst",
+      "location": "Chicago, IL",
+      "startDate": "2022-06",
+      "endDate": "Present",
+      "isCurrent": true,
+      "description": "Monitored and investigated security alerts across cloud and on-prem infrastructure. Automated incident triage workflows using Python and PowerShell."
+    },
+    {
+      "company": "Prairie Tech Systems",
+      "title": "Information Security Intern",
+      "location": "Urbana, IL",
+      "startDate": "2021-05",
+      "endDate": "2021-08",
+      "isCurrent": false,
+      "description": "Assisted in vulnerability management and security compliance audits. Configured IAM roles and AWS CloudTrail alerts."
+    }
+  ],
+  "backgroundCheck": {
+    "hasGovernmentTies": null,
+    "hasGovernmentClearance": null,
+    "hasWorkedForCompanyBefore": null
+  },
+  "skillCategories": [
+    {
+      "name": "Security",
+      "skills": [
+        "SIEM",
+        "Incident Response",
+        "Network Security",
+        "Vulnerability Assessment",
+        "MITRE ATT&CK"
+      ]
+    },
+    {
+      "name": "Technologies & Tools",
+      "skills": [
+        "Python",
+        "PowerShell",
+        "Linux",
+        "AWS",
+        "Azure",
+        "Git",
+        "Docker"
+      ]
+    }
+  ],
+  "workPreferences": {
+    "workAuthorizationCountries": [
+      "US"
+    ],
+    "availableStartDate": "2026-10-01",
+    "expectedAnnualSalary": "110000",
+    "willingToRelocate": false,
+    "remotePreference": "hybrid",
+    "howDidYouHearAboutRole": "Company Website"
+  },
+  "hiddenHeaderLinks": [],
+  "workAuthorization": {
+    "isAuthorizedToWork": true,
+    "needsSponsorship": false,
+    "citizenshipCountries": [
+      "US"
+    ],
+    "workAuthorizations": [
+      {
+        "countryCode": "US",
+        "authorizationBasis": "citizen",
+        "isAuthorizedToWork": true,
+        "needsSponsorship": false
+      }
+    ]
+  },
+  "personalInformation": {
+    "firstName": "Alex",
+    "lastName": "Taylor",
+    "email": "alex.taylor.worksearch@gmail.com",
+    "phone": "312-555-0199",
+    "address": "123 N Wacker Dr",
+    "city": "Chicago",
+    "state": "IL",
+    "zipCode": "60606",
+    "country": "United States",
+    "linkedinUrl": "https://www.linkedin.com/in/alextaylor-tech",
+    "githubUrl": "https://github.com/alextaylor-tech",
+    "website": "https://alextaylor.dev",
+    "isOver18": true
+  },
+  "diversityEquityInclusion": {
+    "gender": "",
+    "ethnicity": "",
+    "isVeteran": null,
+    "hasDisability": null,
+    "isTransgender": null,
+    "sexualOrientation": ""
+  },
+  "relevantCoursework": {
+    "courses": []
+  },
+  "resumeFormat": "pdf",
+  "coverLetterText": "",
+  "hasDocx": false,
+  "bulletPreservation": {}
+}

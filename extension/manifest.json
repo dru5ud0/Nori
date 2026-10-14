@@ -1,0 +1,50 @@
+{
+  "manifest_version": 3,
+  "name": "Tsenta Local Companion",
+  "version": "0.12.0",
+  "description": "Local recruiter capture and explicit selected-job preparation for Mission Control.",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": [
+    "*://*.linkedin.com/*",
+    "*://jobright.ai/*",
+    "*://*.jobright.ai/*",
+    "http://localhost:8000/*",
+    "http://127.0.0.1:8000/*"
+  ],
+  "externally_connectable": {
+    "matches": ["http://localhost:8000/*", "http://127.0.0.1:8000/*"]
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Tsenta Local status",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.linkedin.com/*"],
+      "js": ["content-scripts/linkedin-rsc.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["*://*.linkedin.com/*", "*://jobright.ai/*", "*://*.jobright.ai/*"],
+      "js": ["content-scripts/overlay.js"],
+      "run_at": "document_end",
+      "world": "ISOLATED"
+    },
+    {
+      "matches": ["*://*.linkedin.com/*"],
+      "js": ["content-scripts/linkedin-profile.js"],
+      "run_at": "document_end",
+      "world": "ISOLATED"
+    },
+    {
+      "matches": ["*://jobright.ai/*", "*://*.jobright.ai/*"],
+      "js": ["content-scripts/jobright-rsc.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    }
+  ]
+}

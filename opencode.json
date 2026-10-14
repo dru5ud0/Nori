@@ -1,0 +1,55 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "yunwu/deepseek-v4-flash",
+  "instructions": ["AGENTS.md"],
+  "compaction": {
+    "auto": true,
+    "tail_turns": 15
+  },
+  "tool_output": {
+    "max_lines": 400,
+    "max_bytes": 65536
+  },
+  "references": {
+    "tsenta-intel": {
+      "path": "C:\\Users\\Dru\\Desktop\\Job STuff\\RavenX-CLI\\loot\\scans\\tsenta",
+      "description": "Reverse-engineered Tsenta/autojobs.me intel: FULL_STACK_ANATOMY.md, internal_api_map.md, extension/ (detection engine), desktop/preload_bridge_dump.txt, traces, docs/. Read before building; copy, port, and reuse freely."
+    }
+  },
+  "permission": {
+    "windows_mcp_*": "ask"
+  },
+  "provider": {
+    "yunwu": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Yunwu",
+      "options": {
+        "baseURL": "https://yunwu.ai/v1",
+        "apiKey": "{env:YUNWU_API_KEY}"
+      },
+      "models": {
+        "deepseek-v4-flash": {
+          "name": "DeepSeek V4 Flash"
+        },
+        "deepseek-v4-pro": {
+          "name": "DeepSeek V4 Pro"
+        },
+        "gpt-5-mini": {
+          "name": "GPT-5 Mini"
+        },
+        "claude-haiku-4-5-20251001": {
+          "name": "Claude Haiku 4.5"
+        },
+        "claude-sonnet-5": {
+          "name": "Claude Sonnet 5"
+        },
+        "gemini-2.5-flash": {
+          "name": "Gemini 2.5 Flash"
+        },
+        "qwen3-coder-flash": {
+          "name": "Qwen3 Coder Flash"
+        }
+      }
+    }
+  }
+}

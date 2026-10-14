@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tsentaclone"
+version = "0.11.0"
+description = "Standalone job-application automation engine: ATS detection, Playwright form walking, LLM answering, review gate, feed + sweep (clone of the Tsenta/autojobs.me product)."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.141",
+    "playwright>=1.40",
+    "patchright>=1.40",
+    "pypdf>=4",
+    "python-multipart>=0.0.20",
+    "rich>=13",
+    "uvicorn>=0.52",
+]
+
+[project.optional-dependencies]
+dev = [
+    "httpx2>=2.10",
+    "pytest>=7",
+]
+
+[project.scripts]
+tsenta-cli = "backend.src.tools.tsenta_cli:main"
+
+[tool.setuptools.packages.find]
+include = ["backend*"]
+
+[tool.pytest.ini_options]
+testpaths = ["backend/tests"]
+norecursedirs = [".venv", "node_modules", ".opencode", "webapp"]
+markers = [
+    "live: live-network browser/API tests (set LIVE=1 to run)",
+]

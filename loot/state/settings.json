@@ -1,0 +1,12 @@
+{
+  "optimizationMode": "aggressive",
+  "autoApproveResume": true,
+  "autoSubmitApplication": false,
+  "coverLetterMode": "generated",
+  "autoApproveCoverLetter": true,
+  "reviewBeforeSubmit": false,
+  "useOptimizedResume": true,
+  "requiresPreview": false,
+  "autoAcceptDisclosures": true,
+  "autoAcceptTerms": true
+}

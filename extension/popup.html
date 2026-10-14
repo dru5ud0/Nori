@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tsenta Local</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <span class="brand">TSENTA LOCAL</span>
+        <span id="version" class="version">v0.12.0</span>
+      </header>
+
+      <section class="hero">
+        <h1>Browser companion</h1>
+        <p id="summary">Checking Mission Control and this page…</p>
+      </section>
+
+      <section class="status-grid" aria-label="Extension status">
+        <div class="status-card">
+          <span class="label">MISSION CONTROL</span>
+          <strong id="server-status">CHECKING</strong>
+          <small id="server-detail">127.0.0.1:8000</small>
+        </div>
+        <div class="status-card">
+          <span class="label">CURRENT PAGE</span>
+          <strong id="page-status">CHECKING</strong>
+          <small id="page-detail">Waiting for active tab</small>
+        </div>
+      </section>
+
+      <section class="facts">
+        <div><span>Captured jobs</span><b id="job-count">0</b></div>
+        <div><span>CRM contacts</span><b id="contact-count">—</b></div>
+        <div><span>Selected job</span><b id="selected-job">None</b></div>
+      </section>
+
+      <div id="notice" class="notice">Nothing is sent automatically. Review is always required.</div>
+
+      <section class="actions">
+        <button id="refresh-page" class="primary">Refresh current page</button>
+        <button id="open-control">Open Mission Control</button>
+        <button id="open-networking">Open recruiter CRM</button>
+      </section>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>
