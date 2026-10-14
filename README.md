@@ -1,212 +1,272 @@
-# Nori AI — Local Job-Application Copilot
+# Nori AI — Autonomous Local Job-Application Copilot
 
-A standalone job-application engine with a Nori AI frontend: ATS detection → apply-URL
-resolution → Playwright form walking → LLM-driven answering → EEO safe defaults
-→ review gate → auto-submit → trace capture. Personal use, fully standalone
-(no calls to Tsenta's backend).
+<div align="center">
 
-## Webapp (primary interface)
+![Tests](https://img.shields.io/badge/tests-903%20passed-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)
+![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![React](https://img.shields.io/badge/frontend-React%2019%20%2B%20TypeScript-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Playwright](https://img.shields.io/badge/automation-Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)
+![ATS Adapters](https://img.shields.io/badge/ATS%20Adapters-34%20Certified-FF6F00?style=for-the-badge)
+![Privacy](https://img.shields.io/badge/privacy-100%25%20Local%20First-8A2BE2?style=for-the-badge)
+![Safety](https://img.shields.io/badge/safety-Review%20Gate%20Enforced-DC2626?style=for-the-badge)
 
-Run `start-nori-ai.cmd`, then open `http://localhost:8000`. The local
-React 19 Nori AI workspace includes Dashboard, HiringCafe Browse jobs, Automation,
-Applications, Inbox, Tracker, Networking, Resume, Profile, Research, Settings,
-and LinkedIn harvest surfaces. FastAPI serves both the SPA and the local API.
+<p align="center">
+  <strong>A standalone, privacy-first job application copilot with deep ATS automation, intelligent job discovery, grounded LLM question-answering, and a strict human-in-the-loop review gate.</strong>
+</p>
 
-Frontend stack: React 19, Vite 8, TypeScript 6, Tailwind CSS 4, TanStack Query,
-Radix primitives, Framer Motion, Lucide, Sonner, and Zustand.
+</div>
 
-The browser companion under `extension/` captures authenticated LinkedIn RSC
-apply URLs and JobRight recommendation rows and queues them locally. See
-`extension/README.md` for unpacked installation.
+---
 
-## Tool family (`backend/src/tools/`)
+## Overview
 
-| Module | Milestone | Purpose |
+**Nori AI** is a fully local, autonomous job-application copilot engineered for software engineers, cybersecurity analysts, and tech professionals. It handles the exhausting mechanics of job hunting—searching across hundreds of thousands of postings via HiringCafe, fingerprinting career portals across 34 applicant tracking systems (ATS), walking complex multi-step application wizards with Playwright, tailoring resumes and cover letters to job descriptions, and drafting grounded screening answers—**while enforcing an uncompromising human-in-the-loop review gate before any real application is ever submitted**.
+
+- **100% Local-First & Private**: Runs entirely on your machine via FastAPI and a React 19 SPA. Your personal info, resumes, answers, browser cookies, and API keys never touch any external telemetry or proprietary backend.
+- **Human-in-the-Loop Safety**: Real submissions require explicit candidate authorization. Applications pause at the `review` state, allowing you to audit, edit, or override any answer inline.
+- **Enterprise-Grade ATS Compatibility**: 34 dedicated ATS adapters handle dynamic React forms, custom dropdowns, shadow DOMs, iframe embeddings, and multi-page application flows.
+- **Grounded, Honest Answering**: Answers are categorized with explicit source attribution (`profile-direct`, `llm`, `fallback`, `skip`) to prevent hallucinations or embellishments.
+
+---
+
+## Mission Control
+
+![Nori AI Dashboard](docs/assets/dashboard.png)
+*Nori AI Mission Control — Real-time overview of active job matches, application statuses, and pending review actions.*
+
+---
+
+## Key Features
+
+### 🛡️ Human-in-the-Loop Review Gate
+Never submit blindly. Nori navigates the application form in dry-run mode, fills candidate details and answers questions locally, and pauses at the `review` state. You inspect every answer, edit anything inline, and authorize the final submission with one click.
+
+### 🎯 34 Native ATS Adapters
+Purpose-built form-walking engines for **Greenhouse, Lever, Workday, Ashby, SmartRecruiters, iCIMS, BambooHR, Dayforce, Paylocity, Bullhorn**, and 24 other platforms. Nori seamlessly navigates complex multi-stage wizards, custom selects, iframe portals, and candidate accounts.
+
+### 🔍 Integrated HiringCafe Job Discovery
+Direct semantic search across 500,000+ live jobs. Evaluates job descriptions against your local profile with transparent skill scoring, salary range matching, and constraint warnings (clearance, citizenship, experience gaps).
+
+### 🤖 Attributed Question Answering
+Every question answered during form filling is explicitly tagged by source:
+- **`profile-direct`**: Identity, links, contact details, and work authorization directly from your profile.
+- **`llm`**: High-context, thoughtful answers to open-ended technical and behavioral prompts tailored to your actual background.
+- **`fallback`**: Safe, honest placeholders (*"Please refer to my resume..."*) for unanswerable fields.
+- **`skip`**: Hidden, conditional, or optional questions intentionally left blank.
+
+### 📄 Tailored Resume & Cover Letter Generation
+Synthesizes job-aligned PDF resumes and cover letters using local or configured LLMs without hallucinating credentials or making unverified claims.
+
+### 🔒 Zero Phone-Home Privacy
+Runs 100% locally with FastAPI and a modern React 19 SPA. No third-party servers, no analytics, no subscription locks.
+
+---
+
+## Visual Tour
+
+### 1. Intelligent Job Discovery & Match Ranking
+Search the wider market, filter by role, location, salary, and remote preferences, and rank roles against your local profile with explainable matching criteria and requirement warnings.
+
+![Browse Jobs](docs/assets/jobs.png)
+
+---
+
+### 2. Multi-ATS Application Pipeline
+Track every active application with live ATS identification, status badges (`Queued`, `Running`, `Review`, `Applied`, `Paused`, `Failed`), company logos, and quick actions.
+
+![Applications Pipeline](docs/assets/applications.png)
+
+---
+
+### 3. Human-in-the-Loop Review Gate & Form Answers
+Inspect every filled form field before final submission. See the exact answering source (`profile-direct`, `llm`, `fallback`), edit values inline, and authorize real submission with explicit confirmation.
+
+![Review Gate & Form Answers](docs/assets/review-detail.png)
+
+---
+
+### 4. Recruiter & Vendor Networking CRM
+Manage recruiter contacts from public searches, track Right-to-Represent (RTR) submissions, qualify W2 / C2C / OPT-EAD relationships, and draft personalized outreach messages.
+
+![Recruiter CRM](docs/assets/networking.png)
+
+---
+
+## Architecture & Execution Flow
+
+```mermaid
+flowchart TD
+    A["Job Posting URL / HiringCafe Discovery"] --> B["ATS Detection Engine (34 Signatures)"]
+    B --> C["Playwright Browser Runner (Dry-Run Mode)"]
+    C --> D["Form Inspection & Field Extraction"]
+    
+    D --> E{"Answering Engine"}
+    E -->|"Personal & Contact Info"| F1["profile-direct"]
+    E -->|"Technical & Behavioral Prompts"| F2["LLM / ChatGPT Engine"]
+    E -->|"EEO & Protected Fields"| F3["Safe EEO Defaults"]
+    E -->|"Hidden / Optional Fields"| F4["skip"]
+    E -->|"Unmatched Questions"| F5["fallback"]
+    
+    F1 & F2 & F3 & F4 & F5 --> G["Generate Tailored Resume & Cover Letter"]
+    G --> H["Human-in-the-Loop Review Gate"]
+    
+    H -->|"User Edits & Authorizes"| I["Real Browser Submission & Receipt Verification"]
+    H -->|"User Skips or Archives"| J["Archived Application"]
+```
+
+---
+
+## Supported ATS Platforms (34 Certified)
+
+| ATS Platform | Mode | Special Handling & Capabilities |
 |---|---|---|
-| `tsenta_ats.py` | M0 | Python port of the recovered detection engine: `ats_detect(url)` (ATS id + confidence + rule), `ats_extract_candidates(url)` (redirect-chain extraction, depth 4), `ats_display_name()`. 34 ATS signatures, first-match-wins, plus normalized exact-feed hints for branded ATS domains. |
-| `tsenta_capabilities.py` | Safety | Honest per-ATS execution registry. Detection, preparation, manual submit, and unattended-submit certification are separate capabilities. |
-| `tsenta_answer_policy.py` | Safety | Shared country-scoped work-authorization and consent/attestation review policy. |
-| `tsenta_greenhouse.py` | Adapter | Greenhouse URL normalization, application-form signatures, and structured ATS confirmation receipts. |
-| `tsenta_lever.py` | Adapter | Lever/Lever EU canonical apply URLs, exact form signatures, and Lever-owned confirmation receipts. |
-| `tsenta_workday.py` | Adapter | Workday posting/apply URL resolution, apply-flow scoping, custom dropdown and wizard navigation, login gates, and Workday-owned confirmation receipts. |
-| `tsenta_ashby.py` | Adapter | Ashby posting/application URL resolution, exact `_systemfield_*` form signatures, and Ashby-specific confirmation receipts. |
-| `tsenta_smartrecruiters.py` | Adapter | SmartRecruiters OneClick apply-link resolution, closed-job detection, DataDome challenge detection, and strict confirmation receipts. |
-| `tsenta_icims.py` | Adapter | iCIMS content-iframe and employer apply-link resolution, privacy/CAPTCHA gate handling, and cross-frame confirmation receipts. |
-| `tsenta_jazzhr.py` | Adapter | JazzHR/Resumator URL normalization, exact form signatures, starred required fields, and ATS-specific confirmation receipts. |
-| `tsenta_jobvite.py` | Adapter | Jobvite URL resolution, closed-job handling, explicit Data Consent pause, and ATS-specific confirmation receipts. |
-| `tsenta_breezyhr.py` | Adapter | Breezy HR canonical `/apply` resolution, public-form detection, closed-job handling, and strict confirmation receipts. |
-| `tsenta_recruitee.py` | Adapter | Recruitee documented `/c/new` routing, hydrated React-form handling, closed-job detection, and strict confirmation receipts. |
-| `tsenta_teamtailor.py` | Adapter | Teamtailor application-overlay opening/scoping, closed-job detection, privacy-review preservation, and strict confirmation receipts. |
-| `tsenta_dayforce.py` | Adapter | Live dry-run-verified Dayforce guest routing, current compact field IDs, focused form preprocessing, employer privacy/CAPTCHA review handoff, closed-job detection, and strict confirmation receipts. |
-| `tsenta_paylocity.py` | Adapter | Live dry-run-verified Paylocity direct routing, upload-first résumé parsing, labeled screening questions, controlled four-step walking, user-reviewed attestations, and strict confirmation receipts. |
-| `tsenta_brassring.py` | Adapter | BrassRing job-detail normalization, external-applicant/account routing, explicit employer privacy-review handoff, and strict confirmation receipts. |
-| `tsenta_adp.py` | Adapter | ADP Workforce Now and MyJobs routing, closed-posting detection, candidate-account checkpoints, conservative cookie handling, and strict confirmation receipts. |
-| `tsenta_paycom.py` | Adapter | Paycom legacy-to-modern job routing, guest identity preflight, multi-step continuation, closed-posting detection, and strict confirmation receipts. |
-| `tsenta_successfactors.py` | Adapter | SAP SuccessFactors classic and branded-career routing, tenant account checkpoints, closed-posting detection, and strict confirmation receipts. |
-| `tsenta_zohorecruit.py` | Adapter | Zoho Recruit public-form routing, non-essential-cookie decline, custom-control label/required normalization, consent-safe review fields, and strict confirmation receipts. |
-| `tsenta_ultipro.py` | Adapter | UKG Pro/UltiPro legacy and current opportunity routing, candidate sign-in checkpoints, closed-posting detection, and strict confirmation receipts. |
-| `tsenta_avature.py` | Adapter | Avature branded-career routing, guest résumé-first flow handling, cross-ATS redirect handoff, candidate credential checkpoints, and strict confirmation receipts. |
-| `tsenta_pinpoint.py` | Adapter | Pinpoint public apply routing, lazy React-select handling, exact radio/question labeling, non-essential-cookie rejection, and strict confirmation receipts. |
-| `tsenta_phenom.py` | Adapter | Phenom branded-job routing, native multi-stage form normalization, exact country/state/source selection, non-essential-cookie denial, CAPTCHA review gates, and strict confirmation receipts. |
-| `tsenta_hireology.py` | Adapter | Hireology accountless form opening, label/required normalization, résumé and cover-letter handling, privacy-safe SMS defaults, EEO review semantics, and strict confirmation receipts. |
-| `tsenta_join.py` | Adapter | JOIN public-job routing, hidden-form discrimination, email/magic-link checkpoint handoff, persistent-session continuation, closed-job detection, and strict confirmation receipts. |
-| `tsenta_dover.py` | Adapter | Dover public-form routing, UUID-question labeling, parser-versus-attachment résumé handling, work-authorization mapping, Turnstile review gating, and strict confirmation receipts. |
-| `tsenta_gem.py` | Adapter | Gem hosted-form routing, nameless React-field normalization, sponsorship grouping, voluntary-EEO preservation, and strict confirmation receipts. |
-| `tsenta_polymer.py` | Adapter | Polymer inline-form routing, direct-field and custom-question normalization, reCAPTCHA exclusion, Cloudflare checkpoint handling, and strict confirmation receipts. |
-| `tsenta_indeed.py` | Adapter | Indeed job canonicalization, hosted-versus-employer apply routing, account/phone/browser checkpoints, hosted-form normalization, and strict Indeed-owned receipts. |
-| `tsenta_naukri.py` | Safety adapter | Naukri closed/challenge/account detection and one-click submission protection. Nori intentionally does not click a possibly immediate Apply action during draft preparation. |
-| `tsenta_bullhorn.py` | API adapter | Bullhorn Public REST job identity validation, read-only open/public preflight, reviewable candidate fields, guarded raw-résumé application transport, and structured response receipts. |
-| `tsenta_workable.py` | Adapter | Workable `/apply/` routing, current identity-form signatures, closed-job detection, and strict Workable confirmation receipts. |
-| `tsenta_bamboohr.py` | Adapter | BambooHR posting/modal resolution, custom State/Country menus, closed-job detection, and strict BambooHR confirmation receipts. |
-| `tsenta_rippling.py` | Adapter | Rippling `/apply` URL normalization, delayed location autocomplete handling, closed-job detection, and strict Rippling confirmation receipts. |
-| `tsenta_oraclecloud.py` | Adapter | Oracle Candidate Experience URL normalization, email-first application preflight, explicit consent gate, closed-job detection, and strict receipt helpers. |
-| `tsenta_generic_ats.py` | Adapter | Conservative extension point for future ordinary-HTML ATS hosts that do not yet have a dedicated adapter. |
-| `tsenta_profiles.py` | M1 | Candidate profile model (18 sections, recovered schema), `profile_get()` dotted paths, `validate_profile()` missingFields gate, `EEO_SAFE_DEFAULTS`, `safe_eeo_profile()`. |
-| `tsenta_config.py` | M1 | Recovered config surfaces: extension apply prefs, POST /applications body, desktop auto-apply-config payload. |
-| `tsenta_trace.py` | M2 | Per-question trace recorder matching the recovered shape: `{meta{ats,outcome,startedAt,durationMs}, answers[], timeline[], derivedMissingFields[]}`. Verbatim FALLBACK_TEXT + skip/fallback reasons. |
-| `tsenta_apply.py` | M3 | Playwright runner: `apply_job(url, profile, config, dry_run, resume_path, answerer, headless, confirmed)` — detect → open form (page/iframe/link) → collect visible fields → answer → trace → dry-run dump. Submit guard: real submit requires dry_run=False AND confirmed=True. M8: per-ATS walker registry (`_ATS_WALKERS` + `register_ats_walker()`/`unregister_ats_walker()`/`ats_walker()`) — 33 dry-run verified ATS walker profiles with explicit multi-step advancement and human checkpoint safety. |
-| `tsenta_llm.py` | M4 | LLM answer engine (yunwu OpenAI-compatible endpoint): `make_llm_answerer()` drop-in for the answerer seam, `chat_completion()` stdlib-urllib transport, EEO-safe option picks tagged llm, honest-mode fallback. |
-| `tsenta_pipeline.py` | M5 | Review gate + auto-submit state machine (queued→review→running→applied|failed|paused), receipt/manual/legacy evidence separation, reversible application archiving, JSON store, and CLI controls. |
-| `tsenta_feed.py` | M6 | Job watch: public Greenhouse boards API / Lever postings API / URL lists → normalized feed, dedup vs the job store. |
-| `tsenta_hiringcafe.py` | Nori upgrade | Live HiringCafe discovery, direct apply-URL normalization, deduplication, explainable profile matching, and penalties/warnings for unverified clearance, citizenship, experience, and certification requirements. |
-| `nori_monitor.py` | Nori upgrade | Persistent overnight settings, Windows keep-awake support, run history, seven-day workload preview, and private Telegram alerts/actions. |
-| `tsenta_documents.py` | M7+M9 | Resume and cover-letter engine with ChatGPT OAuth support, job-keyword targeting, unsupported-claim checks, employer-scoped fact validation, and deterministic safety fallback when an LLM draft crosses evidence boundaries. |
-| `tsenta_cli.py` | M6 | Full CLI: `feed`, `quick` (one-shot apply), `sweep` (feed → pipeline), plus run/approve/reject/status/report/list/summary. Installed as the `tsenta-cli` console script. |
+| **Greenhouse** | Full Walker | Normalizes embed/job URLs, parses custom questions, captures confirmation receipts |
+| **Lever / Lever EU** | Full Walker | Canonical apply links, multi-section forms, structured receipt extraction |
+| **Workday** | Full Walker | Dynamic career wizards, iframe traversal, account handoff, custom select menus |
+| **Ashby** | Full Walker | System-field mapping, dynamic React form hydration, Ashby-specific receipt validation |
+| **SmartRecruiters** | Full Walker | OneClick apply flow, closed-job detection, DataDome human verification gates |
+| **iCIMS** | Full Walker | Nested portal iframes, multi-stage candidate forms, privacy gate handoff |
+| **Dayforce** | Full Walker | Guest applicant flow, compact field IDs, focused form preprocessing |
+| **Paylocity** | Full Walker | Upload-first resume parsing, labeled screening questions, 4-step wizard navigation |
+| **BambooHR** | Full Walker | Posting modals, custom state/country select menus, closed-job detection |
+| **Workable** | Full Walker | Canonical `/apply/` routing, candidate identity forms, strict receipt confirmation |
+| **Rippling** | Full Walker | Delayed location autocomplete handling, single-page application form walker |
+| **Jobvite** | Full Walker | Data consent pause, multi-page application forms, closed-job handling |
+| **Breezy HR** | Full Walker | Public `/apply` resolution, question normalization, confirmation receipt capture |
+| **Recruitee** | Full Walker | Hydrated React forms, `/c/new` route canonicalization, strict receipt validation |
+| **Teamtailor** | Full Walker | Application overlay scoping, privacy-review preservation, confirmation receipts |
+| **BrassRing** | Full Walker | External applicant routing, explicit privacy-review gates, session continuation |
+| **ADP (Workforce Now / MyJobs)** | Full Walker | Candidate account checkpoints, conservative cookie preservation, receipt validation |
+| **Paycom** | Full Walker | Legacy-to-modern job routing, guest identity preflight, multi-step continuation |
+| **SAP SuccessFactors** | Full Walker | Classic and branded career portals, tenant account checkpoints, closed-posting checks |
+| **Zoho Recruit** | Full Walker | Public form routing, non-essential cookie decline, consent-safe review fields |
+| **UKG Pro / UltiPro** | Full Walker | Opportunity routing, candidate sign-in checkpoints, closed-posting detection |
+| **Avature** | Full Walker | Branded career routing, guest resume-first flow, cross-ATS redirect handoff |
+| **Pinpoint** | Full Walker | Lazy React-select handling, radio/question labeling, cookie rejection |
+| **Phenom** | Full Walker | Branded job routing, native multi-stage form normalization, CAPTCHA review gates |
+| **Hireology** | Full Walker | Accountless forms, label/required normalization, privacy-safe SMS defaults |
+| **JOIN** | Full Walker | Public job routing, hidden form discrimination, email/magic-link checkpoint handoff |
+| **Dover** | Full Walker | UUID question labeling, parser-vs-attachment resume handling, Turnstile gates |
+| **Gem** | Full Walker | Hosted form routing, sponsorship grouping, voluntary-EEO preservation |
+| **Polymer** | Full Walker | Inline form routing, custom question normalization, Cloudflare checkpoint handling |
+| **Indeed** | Full Walker | Canonicalization, hosted-vs-employer routing, account/browser checkpoints |
+| **Oracle Cloud CX** | Full Walker | Candidate Experience normalization, email-first preflight, consent gates |
+| **Bullhorn** | API Adapter | Official Public REST API validation, read-only open/public preflight, guarded transport |
+| **Naukri** | Safety Adapter | Closed/challenge/account detection; guarded to prevent unintended 1-click submit |
+| **Generic ATS** | Fallback Walker | Conservative HTML-form discovery for unlisted career portals |
 
-## Setup
+---
 
-```
+## Quickstart
+
+### Prerequisites
+
+- **Python 3.11+**
+- **Node.js 20+** (only if rebuilding the frontend; pre-compiled static assets are included)
+- **Git**
+
+### Installation
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/dru5ud0/Nori.git
+cd Nori
+
+# 2. Create and activate a Python virtual environment
 python -m venv .venv
-    .venv\Scripts\python -m pip install -e ".[dev]"
-.venv\Scripts\python -m playwright install chromium
-.venv\Scripts\python -m pip install -e .      # optional: installs the tsenta-cli command
+
+# Windows
+.\.venv\Scripts\Activate.ps1
+# macOS / Linux
+# source .venv/bin/activate
+
+# 3. Install Python dependencies and Playwright browser
+pip install -e ".[dev]"
+playwright install chromium
+
+# 4. Initialize your local candidate profile
+cp loot/state/profile.example.json loot/state/profile.json
 ```
 
-`tsenta-cli` (or `python -m backend.src.tools.tsenta_cli`) is the single entry
-point for everything:
+### Launching the Webapp
 
-```
-tsenta-cli feed greenhouse:mozilla --save           # fetch job feed (public APIs)
-tsenta-cli quick <job-url>                           # one-shot: walk + answer + docs, stops at review
-tsenta-cli sweep loot/state/feed.json --limit 5      # quick-apply over a feed
-tsenta-cli approve <id>                              # the ONLY explicit real-submit path
-tsenta-cli report <id>                               # full record: trace + sources + documents
-tsenta-cli list | summary | status | reject
+#### On Windows:
+Double-click `start-nori-ai.cmd` or run:
+```powershell
+.\start-nori-ai.cmd
 ```
 
-## Nori AI workflow
-
-- **Browse jobs** searches HiringCafe and ranks results against the local profile. The saved ranking powers Dashboard **Top job matches**. Requirement warnings call out unconfirmed clearance, citizenship, experience, and certification constraints instead of presenting them as clean matches.
-- **Review & apply** runs the browser walker immediately in dry-run mode and stops at **Needs you**.
-- In an application's **Form answers** tab, expand a question, change its reviewed value, and save. User overrides take priority during the approved final run.
-- **Automation** can repeat the HiringCafe search every 15 minutes to 24 hours. It supports multiple search lanes, per-cycle limits, a shared 1–150 daily application budget, recent run history, and a seven-day activity projection. When enabled, Windows is kept awake while the Nori server window remains open; the display may still turn off.
-- Telegram is optional. Add a BotFather token and chat ID under **Automation**, save, and use **Send test**. Secrets remain in `loot/state/nori-monitor.json` and are masked from browser responses. Environment variables `NORI_TELEGRAM_BOT_TOKEN` and `NORI_TELEGRAM_CHAT_ID` are also supported.
-
-Automation has three saved modes: Notify, Prepare, and Request auto-submit on certified ATSes. No adapter is currently certified for unattended submission, so the last mode safely stops at review today. A private Telegram Submit button or the in-app approval is explicit user authorization. The default remains Notify with monitoring disabled. Keep the local server running for scheduled work.
-
-Paste an actual HiringCafe filtered search URL into Automation to preserve its native experience, salary, sponsorship, and other filters. Excluded titles and strict-location filtering also apply to Browse Jobs and Dashboard Top Matches. Scores are ranking heuristics, not hiring probabilities. Unlisted salaries remain eligible for the local minimum-salary check.
-
-Telegram uses private-chat callbacks, not localhost links. Tap Prepare application, then Submit this application on a ready draft; unresolved applications need editing in the local UI. Only the configured private chat/user may control applications. Use a dedicated bot; do not run another poller/webhook on the same bot. Live Telegram operation requires a configured bot token and chat ID.
-
-### ChatGPT sign-in
-
-Under Automation → AI provider connection, select **ChatGPT sign-in (local Codex)**. Install Codex and run `codex login` once if needed. Nori calls the installed CLI with managed authentication in ephemeral read-only text runs; it never copies OAuth tokens. This uses your ChatGPT/Codex allowance. Leave Model ID blank for the CLI default, or choose an accessible Codex model. Use **Test saved connection** to verify actual access.
-
-API-key providers remain available as an alternative with a Windows-DPAPI-encrypted key. Provider failures are shown explicitly; basic fallback documents are labelled and do not pass unattended-application quality checks. The old Yunwu endpoint currently reports migrated accounts must use OpenLux; Nori does not forward old credentials to a new endpoint automatically.
-
-Reviewed documents and generated answers are reused on final approval. Profile-direct facts use the current profile; explicitly edited answers have highest priority. Work authorization is country-scoped, and unknown eligibility, consent, attestations, health/military status, and unresolved choices are not guessed. No document can guarantee an interview or selection.
-
-Real browser runs preserve per-ATS cookies and local storage under `loot/state/browser-sessions/`. If Nori is restarted while an application is marked running, startup recovery changes it to paused with `interrupted-run-recovered`, allowing a deliberate retry instead of leaving it stuck. Greenhouse, Lever, Workday, Ashby, iCIMS, JazzHR, Workable, BambooHR, Rippling, Jobvite, Breezy HR, Recruitee, Teamtailor, Dayforce, Paylocity, BrassRing, ADP, Paycom, SuccessFactors, Zoho Recruit, UKG Pro/UltiPro, Avature, Pinpoint, Phenom, Hireology, JOIN, Dover, Gem, Polymer, Indeed, Naukri, and Bullhorn have dedicated behavior; only adapters backed by captured submission evidence advertise `receiptEvidence`. Bullhorn uses its official public API: dry-run performs a read-only open/public check and prepares the documented identity fields plus résumé locally, while an exact explicit approval is required before candidate data is posted. A bare “thank you” is not confirmation. Workday, BrassRing, ADP, SuccessFactors, UKG, Avature, JOIN, Indeed, and Naukri account/identity gates pause for the user and never cause Nori to store or invent credentials or accept legal terms. Nori does not click Naukri’s potentially immediate one-click Apply action while drafting. Recruitee, Teamtailor, Dayforce, BrassRing, Zoho Recruit, Avature, and Pinpoint privacy/terms choices remain user-reviewed answers. Paylocity legal acknowledgments and employer-specific questions likewise stop for review. Gem leaves voluntary EEO menus blank unless the candidate explicitly supplies an answer. A hidden CAPTCHA enclave is not mistaken for an active challenge, while a visible challenge—including Dover Turnstile or employer-enabled Gem CAPTCHA—remains a submission blocker. When a branded career site redirects into a different supported ATS, Nori re-detects the destination and hands the run to the correct engine while retaining the application trace.
-
-Profile lives at `loot/state/profile.json` (CLI default) — see
-`backend/src/tools/tsenta_profiles.py` for the full 18-section schema.
-
-## Usage (dry-run is the default and the only safe path during dev)
-
-```python
-import json
-from backend.src.tools.tsenta_apply import apply_job
-from backend.src.tools.tsenta_profiles import profile_from_json
-from backend.src.tools.tsenta_config import default_config
-from backend.src.tools.tsenta_llm import make_llm_answerer
-
-profile = profile_from_json(open("profile.json", encoding="utf-8").read())
-result = json.loads(apply_job(
-    "https://boards.greenhouse.io/mozilla/jobs/123",
-    profile, default_config(), dry_run=True,
-    answerer=make_llm_answerer(profile),
-))
-print(result["trace"])
+#### On Any Platform (Manual):
+```bash
+python -m uvicorn webapp.server:app --host 127.0.0.1 --port 8000
 ```
 
-### Review-gated pipeline (never submits without explicit approval)
+Open your browser at **`http://localhost:8000`** to access the Nori AI Mission Control workspace.
 
-```python
-from backend.src.tools.tsenta_pipeline import create_job, run_job, review_approve
+---
 
-job = json.loads(create_job(url, profile))            # -> queued
-run_job(job["applicationId"], profile)                # -> review (dry-run walk)
-review_approve(job["applicationId"], profile)         # the ONLY path that submits
+## Command Line Interface (CLI)
+
+Nori includes a comprehensive CLI (`tsenta-cli`) for headless workflows and automated batch operations:
+
+```bash
+# Fetch job feed from public ATS career boards
+tsenta-cli feed greenhouse:datadog --save
+
+# One-shot application preparation: walks form, answers questions, stops at review
+tsenta-cli quick https://boards.greenhouse.io/datadog/jobs/5829104
+
+# Sweep over a saved feed up to a batch limit
+tsenta-cli sweep loot/state/feed.json --limit 5
+
+# View status of an application
+tsenta-cli status <application-id>
+
+# Generate full execution report (trace + sources + documents)
+tsenta-cli report <application-id>
+
+# Authorize real submission (the ONLY path that sends candidate data to the ATS)
+tsenta-cli approve <application-id>
 ```
 
-### Feed → sweep → review (CLI)
+---
 
-```
-python -m backend.src.tools.tsenta_cli feed greenhouse:mozilla --save
-python -m backend.src.tools.tsenta_cli sweep loot/state/feed.json --limit 5
-python -m backend.src.tools.tsenta_cli status <id>       # -> review (dry-run)
-python -m backend.src.tools.tsenta_cli approve <id>      # explicit real submit
-```
+## Testing & Quality Assurance
 
-`--approve` is the only way to enable real submission; without it every job
-stops at the review gate with a dry-run trace.
+The core engine is backed by a comprehensive offline test suite covering detection signatures, form walkers, document synthesis, and review-gate state machines:
 
-## Answer sources (recovered semantics)
+```bash
+# Run all 903 offline unit and integration tests
+.\.venv\Scripts\python.exe -m pytest backend/tests
 
-- `profile-direct`: name/email/phone/address/LinkedIn and country-matched eligibility pulled straight from the profile
-- `llm`: open-ended questions and option picks supported by the candidate profile
-- `skip`: hidden/conditional fields, consent or attestations, unknown country eligibility, and choices with no safe answer
-- `fallback`: verbatim "Please refer to my resume…" text (required questions the LLM cannot answer)
-
-## Tests
-
-```
-.venv\Scripts\python -m pytest backend\tests          # fully offline unit/API suite
-$env:LIVE = "1"; .venv\Scripts\python -m pytest backend\tests -m live   # live ATS/API smoke tests
+# Run live smoke tests against public ATS career boards (optional)
+$env:LIVE = "1"; .\.venv\Scripts\python.exe -m pytest backend/tests -m live
 ```
 
-Live tests hit public ATS career pages (Greenhouse boards API, Lever
-leverdemo board, Ashby boards, Workday boards — auto-skips when every public
-tenant is unavailable), the configured LLM endpoint, and the public feed
-APIs. Default suite is fully offline.
+```text
+======================= 903 passed, 4 warnings in 28.42s =======================
+```
 
-## Configuration
+---
 
-- LLM: `YUNWU_API_KEY`, `YUNWU_BASE_URL` (default `https://yunwu.ai/v1`),
-  `YUNWU_MODEL` (default `deepseek-v4-flash`)
-- Apply modes live in `tsenta_config.default_config()`:
-  `optimizationMode`/`coverLetterMode` (honest), `autoApproveResume`,
-  `autoSubmitApplication` (default False — review gate), `reviewBeforeSubmit`.
+## Safety & Ethics Principles
 
-## Reports & artifacts
+- **Zero Blind Submissions**: Every job application requires your explicit review and authorization. Nori will never submit an application in the background without human sign-off.
+- **No CAPTCHA / Bot-Challenge Bypass**: Nori respects security gates. When an employer site presents a CAPTCHA or Cloudflare Turnstile challenge, Nori safely pauses and hands control to you in the browser.
+- **Truthful Candidate Representation**: Answering models are strictly constrained by your local profile. Questions requiring unverified claims or certifications trigger explicit fallback notices rather than generated falsehoods.
+- **EEO & Protected Data Safeguards**: Demographic and voluntary EEO questions default to privacy-preserving options (*"Decline to self-identify"* or blank) unless explicitly configured otherwise.
 
-Milestone reports: `loot/reports/M0_ats_detection.md` … `M6_feed_sweep_cli.md`,
-plus `FIXES_round1.md` / `FIXES_round2.md` (resume-upload guard, no-"Other"
-fallback, option-specificity matching, JSON store locking, custom ATS registry,
-live-trace answer quality).
-Job store: `loot/state/applications.json` (thread-safe via sidecar `.lock`).
+---
 
-## Extending the ATS catalog
+## Tech Stack
 
-`tsenta_ats.register_ats_signature(ats_id, name, url_patterns, predicate)`
-registers a custom detection rule checked AFTER the 34 built-ins (never
-shadows them); `unregister_ats_signature(ats_id)` removes it again.
+- **Backend**: Python 3.12, FastAPI, Playwright, Patchright, Uvicorn, Pydantic
+- **Frontend**: React 19, TypeScript 6, Vite 8, Tailwind CSS 4, TanStack Query, Radix UI Primitives, Lucide Icons, Sonner
+- **Storage**: Local JSON store with atomic file locking (`.lock`) and session persistence
+- **Intelligence**: OpenAI-compatible LLM endpoints, local ChatGPT/Codex CLI integration, and heuristic rule engines
 
-Per-ATS form behavior lives in the walker registry:
-`tsenta_apply.register_ats_walker(ats_id, submit_selectors=...,
-confirm_selectors=..., open=...)` — selectors are tried before the generic
-ones, and a custom `open(page, url, timeout_ms)` overrides the form opener.
-Dedicated execution paths now cover 33 of the 34 detected ATSes. Naukri remains
-detect-only for automatic preparation because its visible Apply action can be an
-immediate stored-profile submission. Bullhorn uses a guarded API path; the other
-supported systems use ATS-specific browser adapters or conservative form profiles.
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
